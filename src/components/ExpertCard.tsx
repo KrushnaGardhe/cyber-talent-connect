@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, MapPin, Shield, Award, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ExpertCardProps {
   expert: {
@@ -110,11 +111,11 @@ const ExpertCard = ({ expert }: ExpertCardProps) => {
         </div>
 
         <div className="flex space-x-2 pt-2">
-          <Button className="flex-1 bg-gradient-primary shadow-glow" size="sm">
-            Hire Expert
+          <Button className="flex-1 bg-gradient-primary shadow-glow" size="sm" asChild>
+            <Link to="/dashboard">Hire Expert</Link>
           </Button>
-          <Button variant="outline" size="sm">
-            View Profile
+          <Button variant="outline" size="sm" asChild>
+            <Link to={`/experts/${expert.id}`}>View Profile</Link>
           </Button>
         </div>
       </CardContent>

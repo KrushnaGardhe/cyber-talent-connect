@@ -209,7 +209,14 @@ const Experts = () => {
             </div>
 
             <div className="flex flex-wrap gap-2 mt-4">
-              <Button size="sm" className="bg-gradient-primary">
+              <Button 
+                size="sm" 
+                className="bg-gradient-primary"
+                onClick={() => {
+                  // Apply filters logic would go here
+                  console.log("Applying filters:", { selectedSkill, selectedLocation, priceRange });
+                }}
+              >
                 <Filter className="w-4 h-4 mr-2" />
                 Apply Filters
               </Button>

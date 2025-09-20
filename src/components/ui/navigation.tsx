@@ -49,11 +49,11 @@ const Navigation = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              Sign In
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/login">Sign In</Link>
             </Button>
-            <Button size="sm" className="bg-gradient-primary shadow-glow">
-              Get Started
+            <Button size="sm" className="bg-gradient-primary shadow-glow" asChild>
+              <Link to="/register">Get Started</Link>
             </Button>
           </div>
 
@@ -88,11 +88,11 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
-                <Button variant="ghost" size="sm">
-                  Sign In
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/login">Sign In</Link>
                 </Button>
-                <Button size="sm" className="bg-gradient-primary shadow-glow">
-                  Get Started
+                <Button size="sm" className="bg-gradient-primary shadow-glow" asChild>
+                  <Link to="/register">Get Started</Link>
                 </Button>
               </div>
             </div>

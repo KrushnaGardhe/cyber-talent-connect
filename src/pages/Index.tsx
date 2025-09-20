@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/ui/navigation";
 import ExpertCard from "@/components/ExpertCard";
+import { Link } from "react-router-dom";
+import { useRealTimeData, useNotifications } from "@/hooks/useRealTimeData";
 import { 
   Shield, 
   Users, 
@@ -15,11 +17,14 @@ import {
   ArrowRight,
   Globe,
   Lock,
-  Target
+  Target,
+  Bell
 } from "lucide-react";
 import heroImage from "@/assets/hero-cyber.jpg";
 
 const Index = () => {
+  const { onlineExperts, averageResponseTime, totalProjects } = useRealTimeData();
+  const { notifications, clearNotification } = useNotifications();
   // Sample expert data
   const featuredExperts = [
     {
@@ -104,7 +109,7 @@ const Index = () => {
 
   const stats = [
     { label: "Verified Experts", value: "5,000+" },
-    { label: "Projects Completed", value: "25,000+" },
+    { label: "Projects Completed", value: `${Math.floor(totalProjects / 1000)}K+` },
     { label: "Success Rate", value: "98%" },
     { label: "Countries", value: "50+" },
   ];
@@ -143,12 +148,14 @@ const Index = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Button size="lg" className="bg-gradient-primary shadow-glow">
-                  Find Security Experts
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                <Button size="lg" className="bg-gradient-primary shadow-glow" asChild>
+                  <Link to="/experts">
+                    Find Security Experts
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10">
-                  Post Your Project
+                <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10" asChild>
+                  <Link to="/projects">Post Your Project</Link>
                 </Button>
               </div>
 
@@ -168,7 +175,7 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-3">
                       <div className="h-3 w-3 bg-success rounded-full animate-pulse" />
-                      <span className="text-sm font-medium">342 experts online now</span>
+                      <span className="text-sm font-medium">{onlineExperts} experts online now</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -177,12 +184,29 @@ const Index = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-sm text-muted-foreground">Average Response Time</div>
-                        <div className="text-2xl font-bold text-accent">2.3 hours</div>
+                        <div className="text-2xl font-bold text-accent">{averageResponseTime.toFixed(1)} hours</div>
                       </div>
                       <Zap className="h-8 w-8 text-accent" />
                     </div>
                   </CardContent>
                 </Card>
+                
+                {/* Real-time Notifications */}
+                {notifications.length > 0 && (
+                  <Card className="bg-card/80 backdrop-blur-sm shadow-card border-primary/20">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Bell className="h-4 w-4 text-primary animate-pulse" />
+                        <span className="text-xs font-medium text-primary">Live Updates</span>
+                      </div>
+                      {notifications.slice(0, 2).map((notification) => (
+                        <div key={notification.id} className="text-xs text-muted-foreground mb-1">
+                          • {notification.title}
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </div>
           </div>
@@ -238,9 +262,11 @@ const Index = () => {
           </div>
 
           <div className="text-center">
-            <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10">
-              View All Experts
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10" asChild>
+              <Link to="/experts">
+                View All Experts
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </div>
@@ -305,9 +331,11 @@ const Index = () => {
             Join thousands of organizations that trust CyberTalent for their security needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-primary shadow-glow">
-              Get Started Today
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button size="lg" className="bg-gradient-primary shadow-glow" asChild>
+              <Link to="/projects">
+                Get Started Today
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
             <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10">
               Schedule a Demo

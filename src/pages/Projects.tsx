@@ -345,11 +345,33 @@ const Projects = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="bg-gradient-primary shadow-glow">
+          <Button 
+            size="lg" 
+            className="bg-gradient-primary shadow-glow"
+            onClick={() => {
+              // Post project logic
+              console.log("Posting project:", { 
+                projectTitle, 
+                projectDescription, 
+                selectedSkills, 
+                budget, 
+                timeline, 
+                urgency 
+              });
+            }}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Post Project
           </Button>
-          <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10">
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="border-primary/30 hover:bg-primary/10"
+            onClick={() => {
+              // Save draft logic
+              console.log("Saving draft...");
+            }}
+          >
             Save as Draft
           </Button>
         </div>

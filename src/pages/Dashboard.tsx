@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navigation from "@/components/ui/navigation";
+import { Link } from "react-router-dom";
 import { 
   User, 
   Briefcase, 
@@ -207,9 +208,9 @@ const Dashboard = () => {
                         </div>
                       ))}
                     </div>
-                    <Button className="w-full mt-4" variant="outline">
-                      View All Projects
-                    </Button>
+                <Button className="w-full mt-4" variant="outline" asChild>
+                  <Link to="/projects">Browse Projects</Link>
+                </Button>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -271,17 +272,23 @@ const Dashboard = () => {
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full bg-gradient-primary shadow-glow" size="sm">
-                  <Shield className="mr-2 h-4 w-4" />
-                  Browse New Projects
+                <Button className="w-full bg-gradient-primary shadow-glow" size="sm" asChild>
+                  <Link to="/projects">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Browse New Projects
+                  </Link>
                 </Button>
-                <Button className="w-full" variant="outline" size="sm">
-                  <User className="mr-2 h-4 w-4" />
-                  Update Profile
+                <Button className="w-full" variant="outline" size="sm" asChild>
+                  <Link to="/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    Update Profile
+                  </Link>
                 </Button>
-                <Button className="w-full" variant="outline" size="sm">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Messages (3)
+                <Button className="w-full" variant="outline" size="sm" asChild>
+                  <Link to="/messages">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Messages (3)
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
