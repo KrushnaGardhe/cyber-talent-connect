@@ -169,7 +169,7 @@ const Experts = () => {
                   <SelectValue placeholder="Select skill" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Skills</SelectItem>
+                  <SelectItem value="all-skills">All Skills</SelectItem>
                   {skillCategories.map((skill) => (
                     <SelectItem key={skill} value={skill}>
                       {skill}
@@ -184,7 +184,7 @@ const Experts = () => {
                   <SelectValue placeholder="Select location" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Locations</SelectItem>
+                  <SelectItem value="all-locations">All Locations</SelectItem>
                   {locations.map((location) => (
                     <SelectItem key={location} value={location}>
                       {location}
@@ -199,7 +199,7 @@ const Experts = () => {
                   <SelectValue placeholder="Hourly rate" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Any Rate</SelectItem>
+                  <SelectItem value="any-rate">Any Rate</SelectItem>
                   <SelectItem value="0-50">$0 - $50/hr</SelectItem>
                   <SelectItem value="50-100">$50 - $100/hr</SelectItem>
                   <SelectItem value="100-150">$100 - $150/hr</SelectItem>
@@ -213,7 +213,15 @@ const Experts = () => {
                 <Filter className="w-4 h-4 mr-2" />
                 Apply Filters
               </Button>
-              <Button size="sm" variant="outline">
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => {
+                  setSelectedSkill("all-skills");
+                  setSelectedLocation("all-locations");
+                  setPriceRange("any-rate");
+                }}
+              >
                 Clear All
               </Button>
             </div>
