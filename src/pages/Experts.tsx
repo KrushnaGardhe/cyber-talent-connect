@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -6,107 +6,28 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navigation from "@/components/ui/navigation";
 import ExpertCard from "@/components/ExpertCard";
-import { Search, Filter, MapPin, DollarSign, Star } from "lucide-react";
+import { Search, Filter, Users, Loader2 } from "lucide-react";
+import { useExperts } from "@/hooks/useExperts";
 
 const Experts = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSkill, setSelectedSkill] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [priceRange, setPriceRange] = useState("");
+  const [selectedSkill, setSelectedSkill] = useState("all-skills");
+  const [selectedLocation, setSelectedLocation] = useState("all-locations");
+  const [priceRange, setPriceRange] = useState("any-rate");
+  const [sortBy, setSortBy] = useState("rating");
 
-  // Sample expert data - in a real app this would come from an API
-  const experts = [
-    {
-      id: "1",
-      name: "Sarah Chen",
-      title: "Senior Penetration Tester",
-      avatar: "",
-      rating: 4.9,
-      reviewCount: 127,
-      location: "Singapore",
-      hourlyRate: 85,
-      skills: ["Penetration Testing", "OWASP", "Network Security", "Vulnerability Assessment", "Web Application Security"],
-      certifications: ["CISSP", "CEH", "OSCP"],
-      completedProjects: 89,
-      responseTime: "2 hours",
-      isVerified: true,
-    },
-    {
-      id: "2",
-      name: "Marcus Johnson",
-      title: "Incident Response Specialist",
-      avatar: "",
-      rating: 4.8,
-      reviewCount: 95,
-      location: "London, UK",
-      hourlyRate: 95,
-      skills: ["Incident Response", "Digital Forensics", "Malware Analysis", "SIEM", "Threat Hunting"],
-      certifications: ["GCIH", "GNFA", "CISSP"],
-      completedProjects: 67,
-      responseTime: "1 hour",
-      isVerified: true,
-    },
-    {
-      id: "3",
-      name: "Priya Sharma",
-      title: "Cloud Security Architect",
-      avatar: "",
-      rating: 5.0,
-      reviewCount: 73,
-      location: "Mumbai, India",
-      hourlyRate: 75,
-      skills: ["AWS Security", "Azure Security", "DevSecOps", "Container Security", "Kubernetes Security"],
-      certifications: ["CCSP", "AWS Security", "Azure Security"],
-      completedProjects: 45,
-      responseTime: "3 hours",
-      isVerified: true,
-    },
-    {
-      id: "4",
-      name: "David Rodriguez",
-      title: "Compliance & Risk Expert",
-      avatar: "",
-      rating: 4.7,
-      reviewCount: 156,
-      location: "Madrid, Spain",
-      hourlyRate: 80,
-      skills: ["GDPR Compliance", "ISO 27001", "Risk Assessment", "PCI DSS", "HIPAA"],
-      certifications: ["CISA", "CRISC", "ISO 27001 LA"],
-      completedProjects: 112,
-      responseTime: "4 hours",
-      isVerified: true,
-    },
-    {
-      id: "5",
-      name: "Alex Kim",
-      title: "DevSecOps Engineer",
-      avatar: "",
-      rating: 4.9,
-      reviewCount: 84,
-      location: "Seoul, South Korea",
-      hourlyRate: 90,
-      skills: ["DevSecOps", "Container Security", "CI/CD Security", "Infrastructure Security", "Code Review"],
-      certifications: ["CSSLP", "CKS", "AWS DevOps"],
-      completedProjects: 58,
-      responseTime: "2 hours",
-      isVerified: true,
-    },
-    {
-      id: "6",
-      name: "Emily Watson",
-      title: "Security Researcher",
-      avatar: "",
-      rating: 4.8,
-      reviewCount: 92,
-      location: "Toronto, Canada",
-      hourlyRate: 100,
-      skills: ["Vulnerability Research", "Reverse Engineering", "Exploit Development", "Threat Intelligence"],
-      certifications: ["OSEE", "GREM", "CISSP"],
-      completedProjects: 34,
-      responseTime: "6 hours",
-      isVerified: true,
-    }
-  ];
+  const { experts, loading, applyFilters } = useExperts();
+
+  // Apply filters whenever filter values change
+  useEffect(() => {
+    applyFilters({
+      searchTerm,
+      selectedSkill,
+      selectedLocation,
+      priceRange,
+      sortBy,
+    });
+  }, [searchTerm, selectedSkill, selectedLocation, priceRange, sortBy, applyFilters]);
 
   const skillCategories = [
     "Penetration Testing",
@@ -116,7 +37,18 @@ const Experts = () => {
     "Compliance",
     "Digital Forensics",
     "Threat Intelligence",
-    "Security Architecture"
+    "Security Architecture",
+    "OWASP",
+    "Network Security",
+    "Vulnerability Assessment",
+    "Web Application Security",
+    "Malware Analysis",
+    "SIEM",
+    "Threat Hunting",
+    "AWS Security",
+    "Azure Security",
+    "Container Security",
+    "Kubernetes Security"
   ];
 
   const locations = [
@@ -127,8 +59,22 @@ const Experts = () => {
     "Germany",
     "Singapore",
     "Australia",
+    "Spain",
+    "South Korea",
     "Other"
   ];
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setSelectedSkill("all-skills");
+    setSelectedLocation("all-locations");
+    setPriceRange("any-rate");
+    setSortBy("rating");
+  };
+
+  const handleSkillClick = (skill: string) => {
+    setSelectedSkill(skill);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -212,25 +158,15 @@ const Experts = () => {
               <Button 
                 size="sm" 
                 className="bg-gradient-primary"
-                onClick={() => {
-                  // Apply filters logic would go here
-                  console.log("Applying filters:", { selectedSkill, selectedLocation, priceRange });
-                }}
-              >
-                <Filter className="w-4 h-4 mr-2" />
-                Apply Filters
-              </Button>
-              <Button 
-                size="sm" 
+                onClick={handleClearFilters}
                 variant="outline"
-                onClick={() => {
-                  setSelectedSkill("all-skills");
-                  setSelectedLocation("all-locations");
-                  setPriceRange("any-rate");
-                }}
               >
-                Clear All
+                Clear All Filters
               </Button>
+              <div className="text-sm text-muted-foreground flex items-center">
+                <Users className="w-4 h-4 mr-1" />
+                {loading ? "Loading..." : `${experts.length} experts found`}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -239,11 +175,12 @@ const Experts = () => {
         <div className="mb-8">
           <h3 className="text-lg font-semibold mb-4">Popular Skills</h3>
           <div className="flex flex-wrap gap-2">
-            {skillCategories.slice(0, 6).map((skill) => (
+            {skillCategories.slice(0, 8).map((skill) => (
               <Badge
                 key={skill}
-                variant="outline"
+                variant={selectedSkill === skill ? "default" : "outline"}
                 className="cursor-pointer hover:bg-primary/10 hover:border-primary/50 transition-colors"
+                onClick={() => handleSkillClick(skill)}
               >
                 {skill}
               </Badge>
@@ -254,9 +191,18 @@ const Experts = () => {
         {/* Results Summary */}
         <div className="flex items-center justify-between mb-6">
           <div className="text-muted-foreground">
-            Showing <span className="font-semibold text-foreground">{experts.length}</span> experts
+            {loading ? (
+              <div className="flex items-center">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Loading experts...
+              </div>
+            ) : (
+              <>
+                Showing <span className="font-semibold text-foreground">{experts.length}</span> expert{experts.length !== 1 ? 's' : ''}
+              </>
+            )}
           </div>
-          <Select defaultValue="rating">
+          <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -265,17 +211,54 @@ const Experts = () => {
               <SelectItem value="price-low">Price: Low to High</SelectItem>
               <SelectItem value="price-high">Price: High to Low</SelectItem>
               <SelectItem value="reviews">Most Reviews</SelectItem>
-              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="recent">Most Active</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Expert Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
-          {experts.map((expert) => (
-            <ExpertCard key={expert.id} expert={expert} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+              <p className="text-muted-foreground">Loading cybersecurity experts...</p>
+            </div>
+          </div>
+        ) : experts.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
+            {experts.map((expert) => (
+              <ExpertCard 
+                key={expert.id} 
+                expert={{
+                  id: expert.id,
+                  name: expert.display_name || 'Expert',
+                  title: expert.bio?.split('.')[0] || 'Cybersecurity Expert',
+                  avatar: expert.avatar_url || "",
+                  rating: expert.rating || 0,
+                  reviewCount: expert.review_count || 0,
+                  location: expert.location || 'Remote',
+                  hourlyRate: expert.hourly_rate || 0,
+                  skills: expert.skills || [],
+                  certifications: expert.certifications || [],
+                  completedProjects: expert.completed_projects || 0,
+                  responseTime: expert.response_time || '24 hours',
+                  isVerified: expert.is_verified || false,
+                }} 
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <Users className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-xl font-semibold mb-2">No experts found</h3>
+            <p className="text-muted-foreground mb-4">
+              Try adjusting your filters to find more cybersecurity experts.
+            </p>
+            <Button onClick={handleClearFilters} variant="outline">
+              Clear All Filters
+            </Button>
+          </div>
+        )}
 
         {/* Load More */}
         <div className="text-center">

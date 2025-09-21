@@ -31,7 +31,7 @@ export type Database = {
           review_count: number | null
           skills: string[] | null
           updated_at: string
-          user_id: string
+          user_id: string | null
           user_type: string | null
         }
         Insert: {
@@ -50,7 +50,7 @@ export type Database = {
           review_count?: number | null
           skills?: string[] | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           user_type?: string | null
         }
         Update: {
@@ -69,7 +69,7 @@ export type Database = {
           review_count?: number | null
           skills?: string[] | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           user_type?: string | null
         }
         Relationships: []
