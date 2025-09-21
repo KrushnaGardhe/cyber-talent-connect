@@ -1,32 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import Navigation from "@/components/ui/navigation";
-import { Shield, Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { signIn, user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // Simulate login
-    toast({
-      title: "Login Successful",
-      description: "Welcome back to CyberTalent!",
-    });
-    
-    // In a real app, this would handle authentication
-    console.log("Login attempt:", { email, password, rememberMe });
+    try {
+      await signIn(email, password);
+      toast({
+        title: "Welcome back!",
+        description: "You have been successfully logged in.",
+      });
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast({
+        title: "Login Failed",
+        description: error.message || "Please check your credentials and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -106,8 +126,16 @@ const Login = () => {
                 type="submit" 
                 className="w-full bg-gradient-primary shadow-glow"
                 size="lg"
+                disabled={isLoading}
               >
-                Sign In
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
             </form>
             

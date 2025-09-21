@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navigation from "@/components/ui/navigation";
-import { Shield, Eye, EyeOff, User, Building } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Shield, Eye, EyeOff, User, Building, Loader2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Register = () => {
   const [userType, setUserType] = useState("");
@@ -20,9 +21,18 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { signUp, user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
@@ -42,21 +52,42 @@ const Register = () => {
       });
       return;
     }
+
+    if (!userType) {
+      toast({
+        title: "User Type Required",
+        description: "Please select whether you are an expert or client.",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    // Simulate registration
-    toast({
-      title: "Registration Successful",
-      description: "Welcome to CyberTalent! Please check your email to verify your account.",
-    });
+    setIsLoading(true);
     
-    console.log("Registration attempt:", { 
-      userType, 
-      firstName, 
-      lastName, 
-      email, 
-      password,
-      agreeToTerms 
-    });
+    try {
+      const userData = {
+        display_name: `${firstName} ${lastName}`,
+        user_type: userType,
+        first_name: firstName,
+        last_name: lastName
+      };
+      
+      await signUp(email, password, userData);
+      toast({
+        title: "Welcome to CyberTalent!",
+        description: "Your account has been created successfully. You are now logged in.",
+      });
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast({
+        title: "Registration Failed", 
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -214,8 +245,16 @@ const Register = () => {
                 type="submit" 
                 className="w-full bg-gradient-primary shadow-glow"
                 size="lg"
+                disabled={isLoading}
               >
-                Create Account
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </form>
             
